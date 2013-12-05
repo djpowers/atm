@@ -8,8 +8,26 @@ class ATM
   def initialize
     @accounts = []
     @current_account = nil
-    #load accounts from YAML into @@accounts
+    @yaml_file = "accounts.yml"
     puts 'Welcome to the ATM.'
+    populate_account_list
+  end
+
+  def populate_account_list
+    if File.exist?(@yaml_file)
+      File.read(@yaml_file).split("---").map{|x| "---" + x}.slice(1..-1).each{|o| @accounts << YAML::load(o) }
+    else
+      File.open(@yaml_file, "w") do |file|
+      end
+    end
+  end
+
+  def write_to_yaml
+    File.open(@yaml_file, "w") do |file|
+      @accounts.each do |account|
+        file.write(account.to_yaml)
+      end
+    end
   end
 
   def menu
@@ -52,7 +70,8 @@ class ATM
     last = get_last_name
     deposit = get_deposit_amount
     @current_account = Account.new(first, last, pin, deposit)
-    @@accounts << @current_account
+    @accounts << @current_account
+    write_to_yaml ##needs to be deleted
   end
 
   def get_pin
