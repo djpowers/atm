@@ -4,9 +4,10 @@ require 'time'
 require 'pry'
 
 class ATM
-  @@accounts = []
 
   def initialize
+    @accounts = [Account.new("dave","powers","1234",100),Account.new("mo","zhu","4321",200)]
+    @current_account = nil
     #load accounts from YAML into @@accounts
     puts 'Welcome to the ATM.'
   end
@@ -27,7 +28,21 @@ class ATM
   end
 
   def login
-    puts 'login here'
+    puts 'Please enter your PIN:'
+    pin_first = gets.chomp
+    if pin_exists?(pin_first)
+      puts 'Please confirm your PIN:'
+      pin_second = gets.chomp
+      if pin_first == pin_second
+        account_menu
+      else
+        puts 'That PIN does not match.'
+        menu
+      end
+    else
+      puts 'That PIN does not exist.'
+      menu
+    end
   end
 
   def create_account
@@ -35,17 +50,18 @@ class ATM
     first = get_first_name
     last = get_last_name
     deposit = get_deposit_amount
-    @@accounts << Account.new(first, last, pin, deposit)
+    @current_account = Account.new(first, last, pin, deposit)
+    @@accounts << @current_account
   end
 
   def get_pin
     puts 'Enter a PIN:'
     pin = gets.chomp
-    if !unique_pin?(pin)
-      pin
-    else
+    if pin_exists?(pin)
       puts 'That PIN already exists.'
       get_pin
+    else
+      pin
     end
   end
 
@@ -65,8 +81,12 @@ class ATM
     # validate number?
   end
 
-  def unique_pin?(pin)
-    @@accounts.map { |account| account.pin }.include?(pin)
+  def pin_exists?(pin)
+    @accounts.map { |account| account.pin }.include?(pin)
+  end
+
+  def account_menu
+    puts "Account Menu placeholder"
   end
 
 end
