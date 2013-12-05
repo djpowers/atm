@@ -36,7 +36,13 @@ class ATM
     puts 'Enter 2 to create a new account'
     input = gets.chomp.to_i
     if input == 1
-      login
+      if @accounts.empty?
+        puts "There are no accounts on the system."
+        puts "Please create a new account."
+        create_account
+      else
+        login
+      end
     elsif input == 2
       create_account
     else
