@@ -4,17 +4,81 @@ require 'time'
 require 'pry'
 
 class ATM
+  @@accounts = []
+
+  def initialize
+    #load accounts from YAML into @@accounts
+    puts 'Welcome to the ATM.'
+  end
+
+  def menu
+    puts 'Main Menu:'
+    puts 'Enter 1 to login'
+    puts 'Enter 2 to create a new account'
+    input = gets.chomp.to_i
+    if input == 1
+      login
+    elsif input == 2
+      create_account
+    else
+      puts 'Invalid selection'
+      menu
+    end
+  end
+
+  def login
+    puts 'login here'
+  end
+
+  def create_account
+    pin = get_pin
+    first = get_first_name
+    last = get_last_name
+    deposit = get_deposit_amount
+    @@accounts << Account.new(first, last, pin, deposit)
+  end
+
+  def get_pin
+    puts 'Enter a PIN:'
+    pin = gets.chomp
+    if !unique_pin?(pin)
+      pin
+    else
+      puts 'That PIN already exists.'
+      get_pin
+    end
+  end
+
+  def get_first_name
+    puts 'Please enter your first name:'
+    gets.chomp
+  end
+
+  def get_last_name
+    puts 'Please enter your last name:'
+    gets.chomp
+  end
+
+  def get_deposit_amount
+    puts 'Please enter your deposit amount:'
+    gets.chomp.to_i
+    # validate number?
+  end
+
+  def unique_pin?(pin)
+    @@accounts.map { |account| account.pin }.include?(pin)
+  end
 
 end
 
 class Account
-  attr_reader :first_name, :last_name
+  attr_reader :first_name, :last_name, :pin
 
   def initialize(first, last, pin, deposit)
     @first_name = first
     @last_name = last
-    @pin_number = pin
-    @file_path = "#{@pin_number}.csv"
+    @pin = pin
+    @file_path = "#{@pin}.csv"
     create_csv
     add_transaction(Deposit.new(deposit))
   end
@@ -82,11 +146,4 @@ class Withdrawal < Transaction
 end
 
 
-mo_account = Account.new("Mo","Zhu","1234",1000)
-5.times do
-  mo_account.add_transaction(Deposit.new(100))
-  mo_account.add_transaction(Withdrawal.new(50))
-end
-
-puts mo_account.balance
-mo_account.history
+ATM.new.menu
