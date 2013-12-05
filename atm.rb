@@ -6,7 +6,7 @@ require 'pry'
 class ATM
 
   def initialize
-    @accounts = [Account.new("dave","powers","1234",100),Account.new("mo","zhu","4321",200)]
+    @accounts = []
     @current_account = nil
     #load accounts from YAML into @@accounts
     puts 'Welcome to the ATM.'
@@ -34,14 +34,15 @@ class ATM
       puts 'Please confirm your PIN:'
       pin_second = gets.chomp
       if pin_first == pin_second
+        @current_account = @accounts.find{|account| account.pin == pin_first}
         account_menu
       else
         puts 'That PIN does not match.'
-        menu
+        login
       end
     else
       puts 'That PIN does not exist.'
-      menu
+      login
     end
   end
 
@@ -86,7 +87,37 @@ class ATM
   end
 
   def account_menu
-    puts "Account Menu placeholder"
+    puts "Welcome, #{@current_account.first_name} #{@current_account.last_name}"
+    puts "Please select an option"
+    puts "Enter 1 to see your balance"
+    puts "Enter 2 to see your transaction history"
+    puts "Enter 3 to make a withdrawal"
+    puts "Enter 4 to make a deposit"
+    choice = gets.chomp.to_i
+    if choice == 1
+      puts @current_account.balance
+    elsif choice == 2
+      puts @current_account.history
+    elsif choice == 3
+      withdraw
+    elsif choice == 4
+      deposit
+    else
+      puts "Invalid selection."
+      account_menu
+    end
+  end
+
+  def withdraw
+    puts "How much would you like to withdraw?"
+    withdraw_amount = gets.chomp
+    @current_account.add_transaction(Withdrawal.new(withdraw_amount))
+  end
+
+  def deposit
+    puts "How much would you like to deposit?"
+    deposit_amount = gets.chomp
+    @current_account.add_transaction(Deposit.new(deposit_amount))
   end
 
 end
