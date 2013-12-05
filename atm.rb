@@ -26,10 +26,14 @@ class Account
   end
 
   def add_transaction(transaction)
-    CSV.open(@file_path, 'a') do |csv|
-      csv << [transaction.date_time, transaction.class, transaction.amount]
+    if transaction.class == Withdrawal && transaction.amount > balance
+      puts 'You have insufficient funds.'
+      # return to ATM menu, loop
+    else
+      CSV.open(@file_path, 'a') do |csv|
+        csv << [transaction.date_time, transaction.class, transaction.amount]
+      end
     end
-
   end
 
   def balance
