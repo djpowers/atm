@@ -1,7 +1,6 @@
 require 'csv'
 require 'yaml'
 require 'time'
-require 'pry'
 
 class ATM
 
@@ -77,7 +76,7 @@ class ATM
     deposit = get_deposit_amount
     @current_account = Account.new(first, last, pin, deposit)
     @accounts << @current_account
-    write_to_yaml ##needs to be deleted
+    write_to_yaml
   end
 
   def get_pin
@@ -104,7 +103,6 @@ class ATM
   def get_deposit_amount
     puts 'Please enter your deposit amount:'
     gets.chomp.to_i
-    # validate number?
   end
 
   def pin_exists?(pin)
